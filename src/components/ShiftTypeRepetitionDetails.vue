@@ -27,6 +27,11 @@
 				{{ t(APP_ID, 'Amount per week') }}: {{ repetition.config.amount }}
 			</li>
 		</template>
+		<li>
+			{{ repetition.until
+				? t(APP_ID, 'Ends on {formattedUntil}', { formattedUntil })
+				: t(APP_ID, 'Never ends') }}
+		</li>
 	</ul>
 </template>
 
@@ -74,5 +79,9 @@ const formattedTime = computed(() => repetition.weekly_type === 'by_day'
 
 const formattedDuration = computed<string>(() => repetition.weekly_type === 'by_day'
 	? formatDuration(repetition.config.duration, 'long') || t(APP_ID, 'None')
+	: '')
+
+const formattedUntil = computed(() => repetition.until
+	? formatDate(repetition.until, { dateStyle: 'long' })
 	: '')
 </script>

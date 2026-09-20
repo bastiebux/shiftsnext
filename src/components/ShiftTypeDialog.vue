@@ -220,6 +220,16 @@
 							</div>
 						</CustomFieldset>
 					</template>
+					<InputGroup>
+						<label for="shift-type-repetition-until">{{ t(APP_ID, "End date") }}</label>
+						<NcDateTimePickerNative
+							id="shift-type-repetition-until"
+							v-model="untilDate"
+							class="w-full"
+							type="date"
+							hideLabel
+							:helperText="t(APP_ID, 'Leave empty for shifts to repeat indefinitely.')" />
+					</InputGroup>
 					<ShiftTypeRepetitionDetails :repetition />
 				</div>
 			</CustomFieldset>
@@ -343,6 +353,7 @@ const shortDayToAmountMap = ref<ShortDayToAmountMap>({
 })
 const byWeekReference = ref(getIsoWeekDate(undefined, false))
 const byWeekAmount = ref(1)
+const untilDate = ref<Date | null>(null)
 const caldavDescription = ref('')
 const caldavLocation = ref('')
 const caldavCategories = ref('')
@@ -368,6 +379,11 @@ if (shiftType) {
 	frequency.value = shiftType.repetition.frequency
 	interval.value = shiftType.repetition.interval
 	weeklyType.value = shiftType.repetition.weekly_type
+	if (shiftType.repetition.until) {
+		untilDate.value = new Date(
+			shiftType.repetition.until.toZonedDateTime(userTimeZone).epochMilliseconds,
+		)
+	}
 
 	if (shiftType.repetition.weekly_type === 'by_day') {
 		byDayReferenceZdt.value
@@ -407,9 +423,18 @@ async function onSubmit() {
 	}
 }
 
+const until = computed<Temporal.PlainDate | null>(() => untilDate.value
+	? Temporal.PlainDate.from({
+			year: untilDate.value.getFullYear(),
+			month: untilDate.value.getMonth() + 1,
+			day: untilDate.value.getDate(),
+		})
+	: null)
+
 const repetition = computed<Repetition>(() => ({
 	frequency: frequency.value,
 	interval: interval.value,
+	until: until.value,
 	...weeklyType.value === 'by_day'
 		? {
 				weekly_type: 'by_day',
@@ -456,7 +481,10 @@ function buildPayload<T extends ShiftTypePayloadType>(type: T): ShiftTypePayload
 		}
 		return payload as ShiftTypePayload<T>
 	} else {
-		const payload: ShiftTypePutPayload = common
+		const payload: ShiftTypePutPayload = {
+			...common,
+			repetition_until: until.value,
+		}
 		return payload as ShiftTypePayload<T>
 	}
 }
