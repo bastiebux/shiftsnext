@@ -143,7 +143,9 @@ _Amount_ sets the maximum number of occurrences a shift of this type can be crea
 
 By default, a shift type has no end date, meaning shifts can be created from it indefinitely. Setting _End date_ makes shifts of this type _creatable_ only up to and including that date; no shift type slots are shown for later weeks/days. Leave the field empty to go back to repeating indefinitely.
 
-Unlike the other repetition settings, _End date_ can still be changed after a shift type has been created, since doing so has no effect on shifts that already exist.
+##### Editing repetition settings
+
+All of the settings described above can still be changed after a shift type has been created. Doing so only affects which shifts can be created going forward; it has no effect on shifts that already exist, since those are independent records that keep their own start/end time regardless of later changes to the shift type they were created from.
 
 ### Shifts
 

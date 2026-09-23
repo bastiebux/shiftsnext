@@ -159,6 +159,7 @@ final class ShiftTypeController extends ApiController {
 	}
 
 	/**
+	 * @param Repetition $repetition
 	 * @param Caldav $caldav
 	 */
 	#[NoAdminRequired]
@@ -169,10 +170,10 @@ final class ShiftTypeController extends ApiController {
 		string $description,
 		string $color,
 		bool $active,
+		array $repetition,
 		array $caldav,
 		bool $sync_to_calendar,
 		?int $calendar_id,
-		?string $repetition_until,
 	): JSONResponse {
 		try {
 			try {
@@ -215,8 +216,6 @@ final class ShiftTypeController extends ApiController {
 					),
 				);
 			}
-			$repetition = $shiftType->getRepetition();
-			$repetition['until'] = $repetition_until;
 			$shiftType = $this->shiftTypeMapper->updateById(
 				$shiftType,
 				$calendar_id,

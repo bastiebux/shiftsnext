@@ -131,14 +131,12 @@ export interface ShiftTypePostPayload extends Omit<ShiftType, 'id' | 'group' | '
 	calendar_id: number | null
 }
 
-export interface ShiftTypePutPayload extends Omit<ShiftTypePostPayload, 'group_id' | 'repetition'> {
-	/**
-	 * Unlike the other properties of `repetition`, this one can still be
-	 * changed after a shift type has been created, since doing so does not
-	 * affect already existing shifts
-	 */
-	repetition_until: Temporal.PlainDate | null
-}
+/**
+ * `repetition` can be changed after a shift type has been created, since
+ * already existing shifts are independent database records and are not
+ * affected by later changes to the shift type's repetition
+ */
+export type ShiftTypePutPayload = Omit<ShiftTypePostPayload, 'group_id'>
 
 export type ShiftTypePayloadType = 'post' | 'put'
 
