@@ -9,7 +9,6 @@
 					<label for="shift-type-group-id">{{ t(APP_ID, "Group") }}</label>
 					<NcSelect
 						v-model="group"
-						:disabled="!!shiftType"
 						inputId="shift-type-group-id"
 						:options="shiftAdminGroups"
 						label="display_name"
@@ -485,6 +484,7 @@ function buildPayload<T extends ShiftTypePayloadType>(type: T): ShiftTypePayload
 	} else {
 		const payload: ShiftTypePutPayload = {
 			...common,
+			group_id: group.value!.id,
 			repetition: repetition.value,
 		}
 		return payload as ShiftTypePayload<T>

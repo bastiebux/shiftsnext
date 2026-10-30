@@ -174,6 +174,7 @@ final class ShiftTypeController extends ApiController {
 		array $caldav,
 		bool $sync_to_calendar,
 		?int $calendar_id,
+		?string $group_id = null,
 	): JSONResponse {
 		try {
 			try {
@@ -189,6 +190,18 @@ final class ShiftTypeController extends ApiController {
 					"You are not a group shift admin of group `\"$groupId\"` of shift type `$id`",
 					null,
 					$this->l->t('You do not have permissions to update shift types for group %1$s.', [$groupName]),
+				);
+			}
+			if ($group_id === $groupId) {
+				$group_id = null;
+			}
+			if ($group_id !== null && !$this->groupShiftAdminRelationService->isShiftAdmin($group_id)) {
+				$newGroupName = $this->groupService->get($group_id)->getDisplayName();
+				throw new HttpException(
+					Http::STATUS_FORBIDDEN,
+					"You are not a group shift admin of group `\"$group_id\"`",
+					null,
+					$this->l->t('You do not have permissions to move shift types to group %1$s.', [$newGroupName]),
 				);
 			}
 			if (
@@ -219,7 +232,7 @@ final class ShiftTypeController extends ApiController {
 			$shiftType = $this->shiftTypeMapper->updateById(
 				$shiftType,
 				$calendar_id,
-				null,
+				$group_id,
 				$name,
 				$description,
 				$color,

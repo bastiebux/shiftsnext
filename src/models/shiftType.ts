@@ -136,7 +136,7 @@ export interface ShiftTypePostPayload extends Omit<ShiftType, 'id' | 'group' | '
  * already existing shifts are independent database records and are not
  * affected by later changes to the shift type's repetition
  */
-export type ShiftTypePutPayload = Omit<ShiftTypePostPayload, 'group_id'>
+export type ShiftTypePutPayload = ShiftTypePostPayload
 
 export type ShiftTypePayloadType = 'post' | 'put'
 
